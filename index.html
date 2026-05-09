@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Entrevista - IT Support Jayor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --surface: #1e293b;
+            --surface-hover: #334155;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glow: rgba(59, 130, 246, 0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.1), transparent 25%);
+            background-attachment: fixed;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 2rem;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #60a5fa, #34d399);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: var(--surface);
+            border-radius: 4px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .question-meta {
+            display: flex;
+            justify-content: space-between;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            font-weight: 500;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .option {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.2rem 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            line-height: 1.5;
+            display: flex;
+            align-items: center;
+            color: var(--text-main);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option:hover:not(.disabled) {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .option.selected {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: var(--primary);
+        }
+
+        .option.correct {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+        }
+
+        .option.incorrect {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: var(--danger);
+        }
+
+        .option.disabled {
+            cursor: default;
+            opacity: 0.7;
+        }
+
+        .feedback-panel {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.8);
+            border-left: 4px solid var(--primary);
+            display: none;
+            animation: slideDown 0.4s ease forwards;
+        }
+
+        .feedback-panel h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feedback-panel.success {
+            border-left-color: var(--accent);
+        }
+
+        .feedback-panel.success h3 {
+            color: var(--accent);
+        }
+
+        .feedback-panel.error {
+            border-left-color: var(--danger);
+        }
+
+        .feedback-panel.error h3 {
+            color: var(--danger);
+        }
+
+        .feedback-text {
+            color: #cbd5e1;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .controls {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: flex-end;
+            display: none;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 14px 0 var(--glow);
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+        }
+
+        .results-container {
+            display: none;
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: conic-gradient(var(--accent) 0%, var(--surface) 0%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            position: relative;
+        }
+
+        .score-circle::before {
+            content: "";
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            background: var(--surface);
+            border-radius: 50%;
+        }
+
+        .score-text {
+            position: relative;
+            font-size: 2.5rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 1.5rem; }
+            .title { font-size: 2rem; }
+            .question-text { font-size: 1.1rem; }
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .modal-content {
+            background: var(--surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 1rem;
+        }
+        .modal-title {
+            font-size: 1.8rem;
+            color: var(--primary);
+            font-weight: 700;
+        }
+        .close-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .close-btn:hover {
+            color: var(--danger);
+        }
+        .cheat-sheet-section {
+            margin-bottom: 2rem;
+        }
+        .cheat-sheet-section h4 {
+            color: var(--accent);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+            padding-bottom: 0.5rem;
+        }
+        .def-item {
+            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary);
+        }
+        .def-term {
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.3rem;
+            display: inline-block;
+        }
+        .def-desc {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        code {
+            background: #0f172a;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #60a5fa;
+            font-size: 0.9em;
+        }
+        .header-actions {
+            margin-top: 1rem;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 0.6rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-outline:hover {
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="start-screen" style="text-align: center;">
+        <h1 class="title" style="font-size: 3rem; margin-bottom: 1rem;">Laboratorios Jayor</h1>
+        <p class="subtitle" style="margin-bottom: 2rem; font-size: 1.2rem;">Evaluación Técnica: IT Support Nivel 1</p>
+        <p style="color: var(--text-muted); margin-bottom: 3rem; line-height: 1.6; max-width: 600px; margin-left: auto; margin-right: auto;">
+            Esta evaluación interactiva cubre Redes, Active Directory, Impresoras, Troubleshooting de Windows y Soporte en Planta.<br>
+            ¡Demuestra tu nivel técnico y sentido común!
+        </p>
+        <div style="margin-bottom: 2rem;">
+            <label for="category-select" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-muted);">Selecciona una categoría para practicar:</label>
+            <select id="category-select" style="padding: 0.8rem 1rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2); background: var(--surface); color: var(--text); font-size: 1rem; width: 100%; max-width: 350px; outline: none; cursor: pointer;">
+                <option value="all">Todas las categorías (Simulador Completo)</option>
+                <option value="Redes">Redes (Networking / LAN)</option>
+                <option value="Windows">Windows y Troubleshooting</option>
+                <option value="Hardware">Hardware Industrial</option>
+                <option value="Office 365">Office 365 y Telefonía</option>
+                <option value="Active Directory">Active Directory</option>
+                <option value="Impresoras">Impresoras Corporativas</option>
+                <option value="Soporte">Soporte y Soft Skills</option>
+            </select>
+        </div>
+        <button class="btn" style="font-size: 1.2rem; padding: 1rem 3rem;" onclick="startQuiz()">Comenzar Evaluación</button>
+        <div style="margin-top: 2rem;">
+            <button class="btn-outline" onclick="openModal()">📚 Ver Glosario y Comandos</button>
+        </div>
+    </div>
+
+    <div class="container" id="quiz-container" style="display: none;">
+        <header>
+            <h1 class="title">Laboratorios Jayor</h1>
+            <p class="subtitle">Evaluación Técnica: IT Support Nivel 1</p>
+            <div class="header-actions" style="display: flex; gap: 1rem; justify-content: center;">
+                <button class="btn-outline" onclick="openModal()">📚 Glosario</button>
+                <button class="btn-outline" style="border-color: var(--danger); color: var(--danger);" onclick="exitQuiz()">🚪 Salir al Menú</button>
+            </div>
+        </header>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progress"></div>
+        </div>
+
+        <div id="quiz-content">
+            <div class="question-meta">
+                <span id="category">Categoría</span>
+                <span id="question-count">Pregunta 1 de 20</span>
+            </div>
+            
+            <h2 class="question-text" id="question">Cargando pregunta...</h2>
+            
+            <div class="options" id="options">
+                <!-- Opciones generadas por JS -->
+            </div>
+
+            <div class="feedback-panel" id="feedback">
+                <h3 id="feedback-title">Feedback</h3>
+                <p class="feedback-text" id="feedback-text"></p>
+            </div>
+
+            <div class="controls" id="controls">
+                <button class="btn" id="next-btn" onclick="nextQuestion()">Siguiente Pregunta</button>
+            </div>
+        </div>
+
+        <div class="results-container" id="results">
+            <h2 class="title">¡Evaluación Completada!</h2>
+            <p class="subtitle" style="margin-bottom: 2rem;">Aquí tienes tu resultado final.</p>
+            
+            <div class="score-circle" id="score-circle">
+                <span class="score-text" id="score-text">0%</span>
+            </div>
+            
+            <h3 id="result-message" style="margin-bottom: 1rem; font-size: 1.5rem;"></h3>
+            <p id="result-detail" style="color: var(--text-muted); line-height: 1.6; margin-bottom: 2rem;"></p>
+            
+            <button class="btn" onclick="location.reload()">Reintentar Evaluación</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            // Categoría 1: Redes
+            {
+                category: "Fundamentos de Redes",
+                question: "Un equipo en la línea de empaque necesita comunicarse constantemente con una etiquetadora industrial. ¿Qué tipo de configuración IP es la más recomendada para la etiquetadora y por qué?",
+                options: [
+                    "IP Dinámica (DHCP), para evitar conflictos de IP en la red.",
+                    "APIPA (169.254.x.x), ya que están en la misma red local física.",
+                    "IP Estática, para asegurar que la PC siempre la encuentre en la misma dirección sin depender del DHCP.",
+                    "IP Dinámica, pero configurando el servidor DNS manual."
+                ],
+                correct: 2,
+                feedback: "En entornos industriales (y para servidores/impresoras), los equipos críticos deben tener una IP estática (o reserva DHCP) para garantizar accesibilidad constante y evitar desconexiones si el DHCP falla."
+            },
+            {
+                category: "Fundamentos de Redes",
+                question: "Un usuario reporta que no puede acceder a 'intranet.jayor.local', pero si ingresa la IP '192.168.10.50' sí carga el sistema. ¿Qué servicio está fallando?",
+                options: [
+                    "El servidor DHCP.",
+                    "La Puerta de enlace (Gateway).",
+                    "El servidor DNS.",
+                    "La Máscara de subred."
+                ],
+                correct: 2,
+                feedback: "El DNS (Domain Name System) es el encargado de traducir los nombres de dominio a direcciones IP. Si la IP funciona pero el nombre no, es un problema de resolución DNS."
+            },
+            {
+                category: "Fundamentos de Redes",
+                question: "Al conectar una PC nueva en administración, recibe la dirección IP 169.254.x.x y no tiene red. ¿Qué te indica esto?",
+                options: [
+                    "La PC fue bloqueada por el firewall.",
+                    "El servidor DHCP no está respondiendo (falla del servidor, switch o cable).",
+                    "La dirección IP está duplicada en la red.",
+                    "El servidor DNS principal está caído."
+                ],
+                correct: 1,
+                feedback: "Esa es una dirección APIPA. Windows se la autoasigna cuando está configurado por DHCP pero no logra contactar a ningún servidor DHCP para recibir una IP válida."
+            },
+            {
+                category: "Fundamentos de Redes",
+                question: "Una PC en la subred 192.168.1.x necesita enviar datos a un servidor en la subred 192.168.2.x. ¿Qué parámetro de red permite que el tráfico salga de su subred?",
+                options: [
+                    "La Máscara de subred (Subnet Mask).",
+                    "La Puerta de enlace predeterminada (Default Gateway).",
+                    "La dirección del servidor DNS.",
+                    "La dirección MAC."
+                ],
+                correct: 1,
+                feedback: "El Gateway o Puerta de Enlace es el router que permite a los equipos de una red local comunicarse con equipos en otras redes (subredes distintas o internet)."
+            },
+            {
+                category: "Fundamentos de Redes",
+                question: "Haces ping al Gateway local y responde correctamente, pero un 'ping 8.8.8.8' falla por tiempo agotado. ¿Cuál es el problema más probable?",
+                options: [
+                    "La placa de red de la PC está dañada.",
+                    "El cable de red del usuario está cortado.",
+                    "Falla el enlace a internet del proveedor (ISP) o hay un bloqueo en el router.",
+                    "El servidor DNS local está apagado."
+                ],
+                correct: 2,
+                feedback: "Si llegas al Gateway, la red local (cable, placa, switch) funciona. El problema está en el enrutamiento hacia el exterior (ISP caído, firewall bloqueando ICMP)."
+            },
+            // Categoría 2: Windows & O365
+            {
+                category: "Soporte Windows y O365",
+                question: "El Outlook de un gerente no recibe correos y en la barra inferior dice 'Desconectado'. ¿Qué es lo primero que verificas?",
+                options: [
+                    "Reinstalas el paquete de Office 365 completo.",
+                    "Verificas la conexión a internet/red de la PC y luego el estado de la cuenta en Outlook.",
+                    "Borras el perfil de Windows del usuario.",
+                    "Aumentas el tamaño del buzón en el servidor Exchange."
+                ],
+                correct: 1,
+                feedback: "Siempre de lo más simple a lo complejo (Modelo OSI). Primero validar si hay internet, si no está en 'Trabajar sin conexión', y si las credenciales expiraron."
+            },
+            {
+                category: "Soporte Windows y O365",
+                question: "Un usuario puede abrir un Excel en una carpeta compartida del servidor, pero al guardar le da error de 'Acceso Denegado'. ¿Qué revisas?",
+                options: [
+                    "Si tiene licencia de Office 365 activada.",
+                    "Los permisos de Compartición (Share) y de Seguridad (NTFS) de la carpeta en el servidor.",
+                    "Si el disco duro de la PC del usuario está lleno.",
+                    "Si el cable de red está bien conectado."
+                ],
+                correct: 1,
+                feedback: "Para poder modificar archivos en red, el usuario debe tener permisos de 'Modificar' o 'Control Total' tanto en la pestaña Compartir como en la pestaña Seguridad (NTFS) de Windows Server."
+            },
+            {
+                category: "Soporte Windows y O365",
+                question: "Al prender la PC, Windows muestra el error 'El servicio de perfil de usuario no ha podido iniciar sesión'. ¿Qué suele causar esto?",
+                options: [
+                    "La placa de video está fallando.",
+                    "El cable de red está desconectado antes del login.",
+                    "El perfil de usuario en el registro (Regedit) está corrupto o el disco C: está completamente lleno.",
+                    "La contraseña del usuario expiró en el Active Directory."
+                ],
+                correct: 2,
+                feedback: "Es un error clásico de perfil corrupto en `HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\ProfileList` o que el disco no tiene espacio para cargar el archivo NTUSER.DAT."
+            },
+            {
+                category: "Soporte Windows y O365",
+                question: "Una PC con Windows 10 va muy lenta. En el Administrador de Tareas, el uso del Disco está al 100% fijo, pero la CPU y RAM están normales. ¿Solución recomendada?",
+                options: [
+                    "Agregar más memoria RAM (de 8GB a 16GB).",
+                    "Identificar qué proceso usa el disco, y a nivel hardware, reemplazar el disco mecánico (HDD) por un Estado Sólido (SSD).",
+                    "Formatear la PC e instalar Windows 11.",
+                    "Cambiar el procesador."
+                ],
+                correct: 1,
+                feedback: "El cuello de botella es el disco. Identificar servicios pesados (Windows Update, SysMain) ayuda, pero la solución definitiva en IT moderno es migrar de HDD a SSD."
+            },
+            // Categoría 3: Hardware e Infraestructura
+            {
+                category: "Infraestructura Física",
+                question: "¿Cuál es la diferencia principal entre un Switch y un Patch Panel en un rack de comunicaciones?",
+                options: [
+                    "El Patch Panel da direcciones IP, el Switch no.",
+                    "El Switch es un equipo activo que enruta datos; el Patch Panel es pasivo y solo sirve para ordenar el cableado estructurado.",
+                    "Son lo mismo, pero de diferentes marcas.",
+                    "El Patch Panel da energía (PoE) y el Switch no."
+                ],
+                correct: 1,
+                feedback: "El Patch Panel es puramente mecánico (terminación de cables que vienen de la planta). Se usan cables cortos (patch cords) para conectar los puertos del Patch Panel al Switch, que es la electrónica real."
+            },
+            {
+                category: "Diagnóstico de Hardware",
+                question: "Enciendes una PC de planta. Los ventiladores giran, pero no da video y la placa madre emite 3 pitidos largos y repetitivos. ¿Cuál es el problema?",
+                options: [
+                    "Falla en el disco duro.",
+                    "Problema con la fuente de alimentación.",
+                    "Falla o falso contacto en la Memoria RAM.",
+                    "La pila de la BIOS está agotada."
+                ],
+                correct: 2,
+                feedback: "Los pitidos cortos o largos en la secuencia POST (Power-On Self-Test) generalmente indican problemas de Memoria RAM o Tarjeta de Video. Limpiar los contactos de la RAM suele solucionarlo."
+            },
+            {
+                category: "Infraestructura Física",
+                question: "Un cable de red pasa cerca de motores industriales y cuadros eléctricos grandes. La PC conectada pierde paquetes de red aleatoriamente. ¿Causa y solución?",
+                options: [
+                    "El cable es muy corto. Usar uno más largo.",
+                    "Interferencia electromagnética (EMI). Se debe usar cable apantallado (STP/FTP) o separarlo de las líneas eléctricas.",
+                    "Virus en la computadora de control.",
+                    "La PC está configurada con IP dinámica."
+                ],
+                correct: 1,
+                feedback: "Los motores generan fuertes campos electromagnéticos que corrompen los datos en cables UTP normales. El cableado estructurado nunca debe ir por la misma bandeja que la alta tensión."
+            },
+            {
+                category: "Diagnóstico de Hardware",
+                question: "Una PC de supervisión en una zona calurosa de la planta se apaga de golpe a los 15 minutos de uso. Al encenderla, vuelve a pasar. ¿Qué revisas primero?",
+                options: [
+                    "El visor de eventos buscando errores de disco.",
+                    "La temperatura del procesador (pasta térmica reseca o ventilador trabado con polvo).",
+                    "El cable de red.",
+                    "Instalas un antivirus."
+                ],
+                correct: 1,
+                feedback: "Los apagones repentinos bajo carga en zonas industriales casi siempre son protecciones térmicas de la placa madre actuando. Hay que revisar disipadores, ventiladores y pasta térmica."
+            },
+            {
+                category: "Diagnóstico de Hardware",
+                question: "Tienes que cambiar el disco duro averiado de un gerente por un SSD nuevo sin perder sus programas ya instalados. ¿Qué procedimiento usas?",
+                options: [
+                    "Copiar y pegar la carpeta C:\\Windows en el SSD.",
+                    "Usar software de clonación de discos (ej. Macrium Reflect, Clonezilla) para hacer una copia exacta sector por sector.",
+                    "Instalar Windows de cero y usar un pendrive para los programas.",
+                    "Hacer un backup en OneDrive."
+                ],
+                correct: 1,
+                feedback: "La clonación permite transferir todo el sistema operativo, particiones de arranque, programas y datos exactamente como estaban, reduciendo el tiempo de inactividad del usuario."
+            },
+            // Categoría 4: Lógica de Planta (Priorización)
+            {
+                category: "Priorización",
+                question: "El Gerente de RRHH te llama molesto porque no puede imprimir a color. Al mismo tiempo, te avisan que una PC de la línea de empaque dejó de funcionar y la producción está detenida. ¿Qué haces?",
+                options: [
+                    "Atiendes al Gerente porque tiene mayor rango jerárquico.",
+                    "Intentas resolver ambos al mismo tiempo por teléfono.",
+                    "Le explicas amablemente al Gerente la urgencia, pausas su ticket y vas corriendo a la línea de empaque. La producción es la prioridad absoluta.",
+                    "Llamas a un proveedor externo."
+                ],
+                correct: 2,
+                feedback: "En una planta industrial, CUALQUIER detención de línea significa pérdida de dinero y retrasos en la entrega. Producción siempre tiene prioridad 1, sin importar los cargos administrativos."
+            },
+            {
+                category: "Priorización",
+                question: "Suena la alarma de temperatura del cuarto de servidores (Datacenter). El aire acondicionado falló y hace mucho calor. ¿Cuál es la acción inmediata?",
+                options: [
+                    "Abrir la puerta, poner un ventilador y comenzar a apagar de forma segura los servidores no críticos para evitar daños físicos.",
+                    "Mandar un mail a mantenimiento y volver a tu oficina.",
+                    "Reiniciar los servidores para refrescarlos.",
+                    "Llamar al gerente y esperar instrucciones."
+                ],
+                correct: 0,
+                feedback: "El calor extremo funde el hardware rápidamente. Hay que mitigar (ventilación externa) y reducir la carga térmica apagando sistemas no esenciales (dev, backups) mientras llega refrigeración de emergencia."
+            },
+            // Categoría 5: Soft Skills & Ciberseguridad
+            {
+                category: "Soft Skills",
+                question: "Un operario mayor te dice que 'rompió la máquina' y está muy estresado. Llegas y ves que solo desenchufó el monitor sin querer. ¿Cómo reaccionas?",
+                options: [
+                    "Te ríes y le dices que solo era el cable, que preste más atención.",
+                    "Enchufas el monitor en silencio y te vas.",
+                    "Lo calmas, enchufas el cable, y le explicas con empatía cómo verificar ese cable la próxima vez por si le vuelve a pasar, dándole seguridad.",
+                    "Le reportas a su supervisor por hacerte perder tiempo."
+                ],
+                correct: 2,
+                feedback: "El soporte IT no es solo arreglar máquinas, es gestionar la ansiedad del usuario. Tu formación pedagógica brilla aquí: resolver educando, sin condescendencia ni burla."
+            },
+            {
+                category: "Ciberseguridad",
+                question: "Un usuario administrativo recibe un correo que dice ser de 'Soporte Microsoft' pidiendo hacer clic en un link para no perder su cuenta de Office 365. ¿Qué le indicas?",
+                options: [
+                    "Que haga clic pero que no ponga su contraseña real.",
+                    "Que es un intento de Phishing. Que no haga clic, reporte el correo como spam y lo elimine inmediatamente.",
+                    "Que reenvíe el correo a todos sus contactos para avisarles.",
+                    "Que responda el correo insultando al remitente."
+                ],
+                correct: 1,
+                feedback: "El eslabón más débil en seguridad es el usuario. Hay que fomentar una cultura de 'Zero Trust' (Cero Confianza) frente a correos externos urgentes o amenazantes y enseñar a detectar Phishing."
+            },
+            {
+                category: "Ciberseguridad",
+                question: "Un Gerente te pide que le des tu contraseña de Administrador de Dominio 'solo por 5 minutos' para instalar un software que necesita urgente, ya que tú estás ocupado. ¿Qué haces?",
+                options: [
+                    "Se la das porque es el gerente y confías en él.",
+                    "Le pasas la contraseña pero la cambias a los 10 minutos.",
+                    "Te niegas educadamente, le explicas que por políticas de seguridad de la planta las credenciales de admin son intransferibles, y le ofreces instalarlo tú por acceso remoto apenas te desocupes.",
+                    "Le creas un usuario nuevo."
+                ],
+                correct: 2,
+                feedback: "Las credenciales de administrador NUNCA se comparten, bajo ninguna circunstancia jerárquica. Es una regla de oro de auditoría, trazabilidad y ciberseguridad corporativa."
+            },
+            {
+                category: "Soft Skills",
+                question: "Terminas tu turno y te releva el técnico del turno noche. Hay un problema intermitente en la red que no pudiste resolver del todo. ¿Qué es vital hacer?",
+                options: [
+                    "Irte rápido porque ya terminó tu horario.",
+                    "Dejarle un papelito en el teclado que diga 'la red anda mal'.",
+                    "Hacer un traspaso (handover) detallado: qué falló, qué pruebas hiciste, qué descartaste y quién es el usuario afectado, para que él no empiece de cero.",
+                    "Apagar todo para que él lo prenda y empiece fresco."
+                ],
+                correct: 2,
+                feedback: "La comunicación entre turnos en soporte industrial es fundamental. Un buen handover (cambio de guardia) ahorra horas de diagnóstico duplicado y mejora la percepción general del servicio IT."
+            },
+            // Categoría Extra: Celulares y LAN Avanzado
+            {
+                category: "Soporte de Telefonía Móvil",
+                question: "Un supervisor te trae su celular corporativo diciendo que 'no carga y la pantalla se ve un poco levantada por el medio'. ¿Qué haces inmediatamente?",
+                options: [
+                    "Le pasas un cepillo al pin de carga y lo conectas a la corriente para probar.",
+                    "Haces presión sobre la pantalla para intentar cerrarlo y pegarlo.",
+                    "Le dices que lo apague de inmediato, lo aíslas y gestionas un reemplazo. Es una batería inflada (swollen battery) y corre riesgo físico de incendio.",
+                    "Lo reinicias a los valores de fábrica."
+                ],
+                correct: 2,
+                feedback: "Una batería inflada es un riesgo de seguridad físico inminente en cualquier empresa. Nunca se debe conectar a la corriente ni presionar. Se debe apagar y confinar en un lugar seguro hasta su reciclaje."
+            },
+            {
+                category: "Soporte de Telefonía Móvil",
+                question: "Al configurar la cuenta de correo Exchange/Office 365 en el iPhone (App Mail nativa) del Gerente de Planta, te pide permisos de 'Administración de Dispositivos'. El Gerente se asusta y dice que no quiere que lean sus WhatsApps. ¿Qué le explicas?",
+                options: [
+                    "Que tiene razón y es mejor instalar Outlook en su PC personal.",
+                    "Que acepte sin leer, que es un mensaje automático de Apple.",
+                    "Le explicas que es una política estándar (MDM) para que, si pierde el teléfono corporativo, IT pueda borrar solo los correos de la empresa a distancia por seguridad, pero no da acceso a fotos ni WhatsApp personales.",
+                    "Le creas un correo de Gmail temporal."
+                ],
+                correct: 2,
+                feedback: "Parte del soporte es educar al usuario. Las políticas de MDM (Mobile Device Management) asustan, pero explicadas desde la ciberseguridad corporativa (separación de datos) generan confianza y destraban la configuración."
+            },
+            {
+                category: "Troubleshooting LAN",
+                question: "De repente, TODA la red del área de Logística se cae. Las PCs parpadean sus luces de red como locas y no hay internet. Descubres que un operario conectó ambos extremos de un mismo cable de red a dos enchufes de la pared porque 'vio un cable suelto'. ¿Qué provocó?",
+                options: [
+                    "Un cortocircuito eléctrico que quemó el Switch.",
+                    "Un 'Loop de Red' (Tormenta de Broadcast) que colapsó el tráfico del Switch porque los paquetes giran en bucle infinito.",
+                    "Un ataque de denegación de servicio (DDoS) externo.",
+                    "Interferencia EMI por estática."
+                ],
+                correct: 1,
+                feedback: "Conectar un switch consigo mismo (incluso a través de las rosetas) crea un Loop de Red. Si el Switch no tiene el protocolo de seguridad STP activo, la red colapsa inmediatamente por la tormenta de paquetes."
+            },
+            {
+                category: "Soporte de Telefonía Móvil",
+                question: "Un vendedor remoto pierde su celular corporativo, el cual tiene documentos y correos confidenciales. Llama a IT desesperado. ¿Cuál es el procedimiento estándar de Nivel 1?",
+                options: [
+                    "Decirle que ponga la denuncia policial y comprarle otro equipo nuevo.",
+                    "Acceder al portal de administración (MDM / Office 365) y enviar un comando de 'Remote Wipe' (Borrado Remoto) al dispositivo para proteger los datos de la compañía.",
+                    "Llamar al número del celular a ver si alguien contesta y pedir que lo devuelvan.",
+                    "Cambiarle su contraseña de Windows local."
+                ],
+                correct: 1,
+                feedback: "Ante pérdida de equipos móviles corporativos, la primera acción crítica de IT es proteger la información mediante un Borrado Remoto (Wipe) usando las herramientas de administración móvil (MDM)."
+            },
+            // Nivel Planta: Hardware Industrial
+            {
+                category: "Hardware Industrial",
+                question: "Un operario reporta que la impresora Zebra imprime etiquetas muy pálidas o con rayas blancas. ¿Qué revisas primero?",
+                options: [
+                    "Cambiar el cable USB o de red.",
+                    "Aumentar la memoria RAM de la impresora.",
+                    "Revisar si el cabezal térmico está sucio con adhesivo/polvo y limpiarlo con alcohol isopropílico.",
+                    "Reinstalar el controlador (driver) en Windows."
+                ],
+                correct: 2,
+                feedback: "En entornos industriales, el polvo y el adhesivo se acumulan rápidamente en el cabezal de impresión térmica. La limpieza periódica con isopropílico es la solución al 90% de problemas de calidad de impresión."
+            },
+            {
+                category: "Hardware Industrial",
+                question: "Las colectoras de datos (handhelds) pierden señal Wi-Fi repetidamente al entrar a un pasillo de racks metálicos llenos de mercadería líquida. ¿A qué fenómeno físico se debe esto?",
+                options: [
+                    "A un ataque de hackers a la red inalámbrica.",
+                    "Al efecto jaula de Faraday provocado por el metal y la atenuación de los líquidos, impidiendo un 'roaming' correcto entre Access Points (APs).",
+                    "A que la colectora tiene la batería baja.",
+                    "A que el cableado estructurado está mal ponchado."
+                ],
+                correct: 1,
+                feedback: "El metal rebota las señales Wi-Fi (multipath) y los líquidos las absorben (atenuación). Esto crea zonas muertas que dificultan que la colectora haga 'roaming' fluido hacia el AP más cercano."
+            },
+            // Nivel Planta: Normas GMP y Seguridad
+            {
+                category: "Normas GMP y Seguridad",
+                question: "Debes ingresar a reparar una computadora en un Área Estéril (Clean Room) de la planta farmacéutica/laboratorio. ¿Qué regla es inquebrantable?",
+                options: [
+                    "Entrar lo más rápido posible, arreglarlo en 5 minutos y salir sin tocar nada más.",
+                    "Cumplir con el protocolo estricto de vestimenta (cofia, cubrecalzado, guardapolvo estéril) y desinfección de tus herramientas antes de ingresar.",
+                    "Llevar un teclado y mouse nuevos por las dudas.",
+                    "Pedirle al operario que saque la PC al pasillo para evitar entrar."
+                ],
+                correct: 1,
+                feedback: "En entornos GMP (Good Manufacturing Practices), la contaminación de un área limpia puede arruinar lotes enteros de producción. El protocolo de vestimenta y asepsia está por encima de cualquier urgencia de IT."
+            },
+            {
+                category: "Normas GMP y Seguridad",
+                question: "Seguridad de la Información exige bloquear el uso de pendrives (USB) en todas las PCs de las líneas de producción para evitar fuga de información y malware. ¿Cómo lo implementas masivamente?",
+                options: [
+                    "Pasando PC por PC echando pegamento en los puertos físicos.",
+                    "Enviando un correo a los operarios pidiendo que no usen pendrives.",
+                    "Desinstalando los drivers USB desde el Administrador de dispositivos.",
+                    "A través de una Política de Grupo (GPO) en Active Directory o mediante una regla centralizada en el Antivirus corporativo."
+                ],
+                correct: 3,
+                feedback: "La gestión de seguridad corporativa siempre debe ser centralizada y automatizada. Una GPO o un Endpoint Protection permite bloquear el almacenamiento masivo USB instantáneamente en toda la planta."
+            },
+            // Nivel Planta: Lógica de Priorización
+            {
+                category: "Lógica de Priorización",
+                question: "Recibes dos tickets: 1) El Director de Finanzas no puede abrir un PDF. 2) La PC de la balanza de Despacho se colgó y hay dos camiones esperando para salir. ¿Cuál atiendes primero según SLA de planta?",
+                options: [
+                    "Al Director de Finanzas, por tener mayor jerarquía.",
+                    "A la balanza de Despacho. El bloqueo de despacho detiene la cadena de suministro y genera multas logísticas inmediatas.",
+                    "El que haya llegado primero al sistema de tickets.",
+                    "Ninguno, escalas ambos a tu supervisor."
+                ],
+                correct: 1,
+                feedback: "En una planta, los procesos 'Core' (Producción y Logística de Despacho) siempre tienen prioridad crítica (SLA Alto) sobre cualquier tarea administrativa, independientemente del rango del usuario."
+            },
+            {
+                category: "Lógica de Priorización",
+                question: "Hay un corte general de red del proveedor de internet. El Gerente General te exige que le des internet primero a su oficina. ¿Qué haces?",
+                options: [
+                    "Le compartes internet desde tu celular personal.",
+                    "Le conectas el cable del router principal directo a su laptop.",
+                    "Le explicas educadamente que es un problema externo del proveedor, le muestras el número de reclamo abierto y le ofreces informarle apenas se restablezca.",
+                    "Ignoras su petición."
+                ],
+                correct: 2,
+                feedback: "Comunicación asertiva y basada en evidencia. Ante fallas de proveedores, IT no hace milagros, pero sí gestiona. Explicar el problema técnico y dar seguimiento transmite profesionalismo."
+            },
+            // Nivel Planta: Automatización e IT
+            {
+                category: "Automatización",
+                question: "Necesitas mapear la unidad de red 'Z:' compartida en un servidor para 50 operarios del nuevo turno. En lugar de ir PC por PC, ¿qué recurso puedes usar?",
+                options: [
+                    "Un script en Bash con el comando 'mount'.",
+                    "Un archivo .bat o script PowerShell que ejecute 'net use Z: \\\\servidor\\carpeta' distribuido por GPO o logon script.",
+                    "Enviarles un PDF con las instrucciones.",
+                    "Configurarlo en el servidor DNS."
+                ],
+                correct: 1,
+                feedback: "Automatizar con scripts (como el comando 'net use' en un archivo .bat de inicio de sesión) ahorra horas de soporte y evita errores de configuración manual."
+            },
+            {
+                category: "Automatización",
+                question: "Tienes que revisar diariamente el espacio libre en disco de los 10 Servidores de la planta. ¿Cuál es el enfoque de un técnico Senior?",
+                options: [
+                    "Entrar por Escritorio Remoto a los 10 servidores todas las mañanas.",
+                    "Crear un script en PowerShell que consulte el espacio libre de todos los servidores y te envíe una alerta automática si alguno baja del 10%.",
+                    "Esperar a que un usuario reporte lentitud.",
+                    "Reinstalar Windows Server periódicamente."
+                ],
+                correct: 1,
+                feedback: "La filosofía de IT moderno es proactiva, no reactiva. Automatizar el monitoreo con PowerShell o herramientas como Zabbix previene caídas masivas en planta."
+            },
+            // Hardware Avanzado y Redes
+            {
+                category: "Hardware Industrial",
+                question: "Al cambiar el rollo térmico (Ribbon) en una impresora Zebra, la impresora marca error 'Ribbon Out' (Falta Ribbon) aunque el rollo es nuevo. ¿Qué pudo haber pasado?",
+                options: [
+                    "El Ribbon está puesto al revés (la cara mate con tinta no está tocando la etiqueta) o el sensor óptico está sucio.",
+                    "La impresora fue atacada por un ransomware.",
+                    "El cable USB está desconectado.",
+                    "El servidor de impresión se cayó."
+                ],
+                correct: 0,
+                feedback: "Un error clásico industrial. El Ribbon tiene tinta solo de un lado (la parte mate). Si se enhebra al revés, no transfiere tinta y el sensor no lo detecta bien."
+            },
+            {
+                category: "Troubleshooting Avanzado",
+                question: "Un usuario no tiene internet. Ejecutas un ping a 8.8.8.8 y responde OK, pero el ping a google.com falla. ¿Qué comando usarías para consultar directamente qué servidor DNS está fallando la resolución?",
+                options: [
+                    "netstat -an",
+                    "nslookup google.com",
+                    "tracert",
+                    "ipconfig /release"
+                ],
+                correct: 1,
+                feedback: "'nslookup' (Name Server Lookup) es la herramienta definitiva para consultar servidores DNS y diagnosticar problemas de resolución de nombres en la red corporativa."
+            },
+            {
+                category: "Infraestructura Física",
+                question: "Tenés que armar un cable de red directo para conectar una PC a un switch. ¿Qué norma de colores es la más recomendada y estandarizada para el conector RJ45?",
+                options: [
+                    "T568A en ambos extremos.",
+                    "T568B en ambos extremos.",
+                    "T568A en un extremo y T568B en el otro (Cable Cruzado).",
+                    "Cualquier orden siempre y cuando sea el mismo en ambos extremos."
+                ],
+                correct: 1,
+                feedback: "La norma T568B es el estándar de cableado más utilizado a nivel global en entornos comerciales e industriales. Aunque la T568A sirve, la convención principal es la B."
+            },
+            {
+                category: "Soporte Windows y O365",
+                question: "Un usuario dice que no recibe mails en el Outlook de su PC, pero si ingresa por la web (OWA) sí los ve y están actualizados. ¿Cuál es el primer paso lógico de soporte?",
+                options: [
+                    "Cambiarle la contraseña del correo por seguridad.",
+                    "Formatear la PC porque debe tener un malware.",
+                    "Reparar el perfil de Outlook o verificar si el archivo de datos local (.ost) está dañado o sin espacio.",
+                    "Aumentar la cuota del buzón en el servidor Exchange."
+                ],
+                correct: 2,
+                feedback: "Si OWA funciona bien, el problema está estrictamente en el cliente local. El archivo .ost (caché) suele corromperse; renombrarlo o crear un perfil nuevo fuerza una sincronización fresca desde el servidor."
+            },
+            {
+                category: "Soporte de Telefonía Móvil",
+                question: "Un gerente no puede entrar a su correo corporativo desde el celular porque la app le pide un 'Token' que cambia constantemente. ¿Qué herramienta deberías revisar?",
+                options: [
+                    "El antivirus del celular móvil.",
+                    "La aplicación de autenticación (como Microsoft Authenticator) y verificar que la cuenta esté bien vinculada (MFA).",
+                    "El cliente VPN del celular.",
+                    "El paquete de datos de la línea telefónica."
+                ],
+                correct: 1,
+                feedback: "Los 'Tokens' son códigos de Autenticación Multifactor (MFA/2FA). Si no puede acceder, suele ser porque desinstaló el Authenticator, cambió de equipo o se desvinculó su cuenta corporativa."
+            },
+            // Active Directory
+            { category: "Active Directory", question: "Un usuario reporta que no puede iniciar sesión en su PC y el sistema dice 'La cuenta está bloqueada'. ¿Cuál es el procedimiento en Active Directory?", options: ["Resetear su contraseña obligatoriamente.", "Buscar el usuario en AD, ir a Propiedades -> Account y destildar 'Unlock account'.", "Eliminar el usuario y crearlo de nuevo.", "Mover la PC a otra OU."], correct: 1, feedback: "El bloqueo de cuenta (Account Lockout) ocurre tras varios intentos fallidos. En AD, simplemente se tilda/destilda la opción 'Unlock account' en la pestaña Account." },
+            { category: "Active Directory", question: "Hiciste un reset de contraseña temporal para un operario. ¿Qué opción debes marcar en AD por seguridad?", options: ["User cannot change password.", "Password never expires.", "User must change password at next logon.", "Account is disabled."], correct: 2, feedback: "Siempre se debe marcar 'User must change password at next logon' para que el usuario sea el único que conozca su contraseña final." },
+            { category: "Active Directory", question: "El equipo de una sala no tiene red y no puede contactar al dominio. Necesitas iniciar sesión como administrador local de la máquina. ¿Cómo ingresas el usuario en la pantalla de login?", options: [".\\Administrador", "dominio\\Administrador", "Administrador@dominio.local", "LOCAL/Administrador"], correct: 0, feedback: "El prefijo '.\\' le indica a Windows que valide las credenciales contra la base de datos SAM local de la máquina, ignorando el dominio." },
+            { category: "Active Directory", question: "Al intentar agregar una PC al dominio 'jayor.local', recibes el error 'No se pudo contactar con un controlador de dominio'. ¿Qué es lo primero que verificas?", options: ["Si la PC tiene suficiente memoria RAM.", "Si la PC tiene configurada correctamente la IP del servidor DNS primario del dominio en la placa de red.", "Si la licencia de Windows está activada.", "Si el usuario tiene permisos de Administrador Local."], correct: 1, feedback: "Para que una PC encuentre un dominio, DEBE tener configurado en su adaptador de red el DNS que apunta al Controlador de Dominio." },
+            // Impresoras Corporativas
+            { category: "Impresoras Corporativas", question: "Un usuario manda a imprimir pero no sale nada. Otras PCs sí pueden imprimir en esa misma impresora de red. ¿Qué revisas primero en la PC afectada?", options: ["Que la impresora tenga papel.", "La Cola de Impresión local para ver si hay un documento trabado con estado de Error.", "El nivel de tóner de la impresora.", "Si la placa de red de la PC funciona."], correct: 1, feedback: "Si otros imprimen, la impresora física está bien. El problema es el cliente: un documento trabado en la cola local bloquea todos los envíos posteriores de esa PC." },
+            { category: "Impresoras Corporativas", question: "El servicio 'Print Spooler' (Cola de impresión) de Windows se detiene automáticamente apenas lo inicias. ¿Qué acción suele destrabarlo?", options: ["Reinstalar Windows.", "Borrar los archivos temporales en la ruta C:\\Windows\\System32\\spool\\PRINTERS y reiniciar el servicio.", "Cambiar la dirección IP de la impresora.", "Aumentar la memoria virtual de la PC."], correct: 1, feedback: "Archivos corruptos en la carpeta PRINTERS del sistema causan que el Spooler crashee constantemente al intentar leerlos. Borrarlos fuerza una cola limpia." },
+            { category: "Impresoras Corporativas", question: "Tienes una impresora de red conectada por IP. De un día para otro, todas las PCs la muestran como 'Offline' u 'Sin Conexión'. ¿Qué diagnosticas primero?", options: ["Hacer ping a la IP de la impresora para confirmar que está encendida y visible en la red.", "Borrar y volver a crear todas las impresoras en todas las PCs.", "Reinstalar el driver de red en el servidor.", "Comprar un cable USB largo."], correct: 0, feedback: "Ping a la IP es el paso 1. Si no responde, el problema es físico o de red (cable, switch, DHCP). Si responde, el problema es de software." },
+            { category: "Impresoras Corporativas", question: "¿Cuál es la ventaja de instalar una impresora en un Servidor de Impresión Windows (Print Server) y compartirla, en lugar de instalarla por IP directamente en cada PC?", options: ["Consume menos tinta.", "Administración centralizada: instalas el driver una vez, y puedes auditar y gestionar las colas de todos los usuarios desde un solo lugar.", "Imprime más rápido físicamente.", "Evita que la impresora se quede sin papel."], correct: 1, feedback: "Un Print Server facilita enormemente el despliegue mediante GPO y permite un control centralizado de drivers y colas." }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let isAnswered = false;
+        let filteredQuestions = [];
+
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const categoryEl = document.getElementById('category');
+        const countEl = document.getElementById('question-count');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackText = document.getElementById('feedback-text');
+        const controlsEl = document.getElementById('controls');
+        const progressEl = document.getElementById('progress');
+        const quizContent = document.getElementById('quiz-content');
+        const resultsEl = document.getElementById('results');
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function startQuiz() {
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('quiz-container').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('quiz-content').style.display = 'block';
+            
+            const selectedCat = document.getElementById('category-select').value;
+            if (selectedCat === 'all') {
+                filteredQuestions = [...questions];
+            } else {
+                filteredQuestions = questions.filter(q => {
+                    const c = q.category.toLowerCase();
+                    if (selectedCat === 'Redes') return c.includes('redes') || c.includes('lan') || c.includes('física') || c.includes('virtualización');
+                    if (selectedCat === 'Windows') return c.includes('windows') || c.includes('comandos') || c.includes('automatización');
+                    if (selectedCat === 'Hardware') return c.includes('hardware') || c.includes('física');
+                    if (selectedCat === 'Office 365') return c.includes('o365') || c.includes('office') || c.includes('telefonía');
+                    if (selectedCat === 'Active Directory') return c.includes('active directory');
+                    if (selectedCat === 'Impresoras') return c.includes('impresoras');
+                    if (selectedCat === 'Soporte') return c.includes('soporte') || c.includes('soft skills') || c.includes('priorización') || c.includes('gmp') || c.includes('ciberseguridad');
+                    return true;
+                });
+            }
+            if(filteredQuestions.length === 0) filteredQuestions = [...questions];
+
+            currentQuestion = 0;
+            score = 0;
+            shuffleArray(filteredQuestions);
+            loadQuestion();
+        }
+
+        function exitQuiz() {
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('start-screen').style.display = 'block';
+        }
+
+        function loadQuestion() {
+            isAnswered = false;
+            feedbackEl.style.display = 'none';
+            controlsEl.style.display = 'none';
+            
+            const q = filteredQuestions[currentQuestion];
+            categoryEl.innerText = q.category;
+            countEl.innerText = `Pregunta ${currentQuestion + 1} de ${filteredQuestions.length}`;
+            questionEl.innerText = q.question;
+            
+            // Actualizar progreso
+            const progress = ((currentQuestion) / filteredQuestions.length) * 100;
+            progressEl.style.width = `${progress}%`;
+
+            optionsEl.innerHTML = '';
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('div');
+                btn.className = 'option';
+                btn.innerHTML = `<span style="font-weight: 600; margin-right: 15px; color: var(--primary);">${String.fromCharCode(65 + index)})</span> ${opt}`;
+                btn.onclick = () => selectOption(index, btn);
+                optionsEl.appendChild(btn);
+            });
+        }
+
+        function selectOption(index, selectedBtn) {
+            if (isAnswered) return;
+            isAnswered = true;
+
+            const q = filteredQuestions[currentQuestion];
+            const isCorrect = index === q.correct;
+            
+            const allOptions = optionsEl.children;
+            for (let i = 0; i < allOptions.length; i++) {
+                allOptions[i].classList.add('disabled');
+                if (i === q.correct) {
+                    allOptions[i].classList.add('correct');
+                } else if (i === index && !isCorrect) {
+                    allOptions[i].classList.add('incorrect');
+                }
+            }
+
+            selectedBtn.classList.add('selected');
+
+            if (isCorrect) {
+                score++;
+                showFeedback(true, q.feedback);
+            } else {
+                showFeedback(false, q.feedback);
+            }
+
+            controlsEl.style.display = 'flex';
+            
+            if (currentQuestion === filteredQuestions.length - 1) {
+                document.getElementById('next-btn').innerText = 'Ver Resultados';
+            }
+        }
+
+        function showFeedback(isCorrect, text) {
+            feedbackEl.className = `feedback-panel ${isCorrect ? 'success' : 'error'}`;
+            feedbackTitle.innerHTML = isCorrect ? 
+                '<svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20" style="margin-right: 5px;"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg> ¡Correcto!' : 
+                '<svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20" style="margin-right: 5px;"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg> Incorrecto';
+            feedbackText.innerText = text;
+            feedbackEl.style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < filteredQuestions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            quizContent.style.display = 'none';
+            progressEl.style.width = '100%';
+            
+            const percentage = Math.round((score / filteredQuestions.length) * 100);
+            
+            // Animación del círculo
+            const circle = document.getElementById('score-circle');
+            circle.style.background = `conic-gradient(var(--accent) ${percentage}%, var(--surface) ${percentage}%)`;
+            if(percentage < 60) {
+                circle.style.background = `conic-gradient(var(--danger) ${percentage}%, var(--surface) ${percentage}%)`;
+                document.getElementById('score-text').style.color = 'var(--danger)';
+            } else if (percentage < 80) {
+                circle.style.background = `conic-gradient(#f59e0b ${percentage}%, var(--surface) ${percentage}%)`;
+                document.getElementById('score-text').style.color = '#f59e0b';
+            }
+
+            let count = 0;
+            const interval = setInterval(() => {
+                if(count >= percentage) clearInterval(interval);
+                document.getElementById('score-text').innerText = `${count}%`;
+                count++;
+            }, 20);
+
+            const msgEl = document.getElementById('result-message');
+            const detailEl = document.getElementById('result-detail');
+            
+            if (percentage >= 85) {
+                msgEl.innerText = "¡Contratado! Nivel Sobresaliente.";
+                msgEl.style.color = "var(--accent)";
+                detailEl.innerText = `Acertaste ${score} de ${filteredQuestions.length}. Tienes un sólido conocimiento técnico y un excelente sentido común para entornos industriales. Tu perfil docente es un plus enorme.`;
+            } else if (percentage >= 60) {
+                msgEl.innerText = "Buen Perfil, con potencial de crecimiento.";
+                msgEl.style.color = "#f59e0b";
+                detailEl.innerText = `Acertaste ${score} de ${filteredQuestions.length}. Manejas muy bien los conceptos, aunque hay detalles técnicos específicos de infraestructura que pulirás con la práctica en planta.`;
+            } else {
+                msgEl.innerText = "Necesitas repasar los fundamentos.";
+                msgEl.style.color = "var(--danger)";
+                detailEl.innerText = `Acertaste ${score} de ${filteredQuestions.length}. Te recomendamos repasar los conceptos de Redes y Troubleshooting avanzado en Windows. ¡La perseverancia es clave!`;
+            }
+
+            resultsEl.style.display = 'block';
+        }
+
+        // Iniciar ahora depende del botón startQuiz()
+        // initQuiz();
+
+        // Modal Logic
+        function openModal() {
+            document.getElementById('cheat-sheet-modal').classList.add('active');
+        }
+        function closeModal() {
+            document.getElementById('cheat-sheet-modal').classList.remove('active');
+        }
+        // Cerrar con click afuera
+        document.getElementById('cheat-sheet-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeModal();
+        });
+    </script>
+
+    <!-- Modal Glosario -->
+    <div class="modal-overlay" id="cheat-sheet-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Glosario Técnico y Comandos</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            
+            <div class="cheat-sheet-section">
+                <h4>Sistemas y Active Directory</h4>
+                <div class="def-item">
+                    <span class="def-term">Active Directory (AD):</span>
+                    <p class="def-desc">Directorio centralizado de Microsoft donde se administran los usuarios, contraseñas, grupos de seguridad y computadoras de la red corporativa (el "Dominio").</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">GPO (Group Policy Object):</span>
+                    <p class="def-desc">Políticas de Grupo. Permiten a IT configurar remotamente opciones de Windows (bloquear USB, mapear impresoras, fondos de pantalla) en miles de PCs a la vez desde el servidor.</p>
+                </div>
+            </div>
+            
+            <div class="cheat-sheet-section">
+                <h4>Definiciones de Redes</h4>
+                <div class="def-item">
+                    <span class="def-term">Dirección IP (IPv4):</span>
+                    <p class="def-desc">Es la "matrícula" o identificador único de un equipo en la red (ej. 192.168.1.50). Puede ser Estática (configurada manualmente) o Dinámica (asignada por DHCP).</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">DNS (Domain Name System):</span>
+                    <p class="def-desc">Actúa como la agenda telefónica de internet. Traduce nombres fáciles de recordar (ej. intranet.jayor.local) a direcciones IP que las computadoras entienden.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">DHCP (Dynamic Host Config. Protocol):</span>
+                    <p class="def-desc">Servicio que asigna automáticamente direcciones IP, máscaras y puertas de enlace a los dispositivos que se conectan a la red, evitando conflictos.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">Gateway (Puerta de Enlace):</span>
+                    <p class="def-desc">Es el enrutador (router) que permite a los equipos de una red local comunicarse con otras redes externas, como internet o subredes de otras plantas.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">APIPA (169.254.x.x):</span>
+                    <p class="def-desc">Si un equipo Windows está configurado por DHCP pero no encuentra ningún servidor que le asigne IP, se autoasigna una dirección en este rango. Significa falla de conexión al DHCP.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">Roaming Wi-Fi:</span>
+                    <p class="def-desc">Proceso por el cual una colectora o dispositivo móvil cambia de un Access Point (AP) a otro sin perder conexión. En plantas con racks metálicos y líquidos (jaula de Faraday / atenuación), el roaming puede fallar y desconectar el equipo.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">SLA (Service Level Agreement):</span>
+                    <p class="def-desc">Acuerdo de Nivel de Servicio. Establece los tiempos máximos permitidos de respuesta y resolución en IT corporativo. Un bloqueo en producción o despacho tiene el SLA de máxima prioridad.</p>
+                </div>
+            </div>
+
+            <div class="cheat-sheet-section">
+                <h4>Comandos de Diagnóstico (CMD)</h4>
+                <div class="def-item">
+                    <span class="def-term"><code>ping [ip o dominio]</code></span>
+                    <p class="def-desc">Verifica si hay conectividad básica con otro equipo enviando paquetes de prueba (ICMP). Ej: <code>ping 8.8.8.8</code>.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term"><code>ipconfig /all</code></span>
+                    <p class="def-desc">Muestra la configuración de red actual del equipo (IP, Máscara, Gateway, MAC Address y servidores DNS).</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term"><code>ipconfig /flushdns</code></span>
+                    <p class="def-desc">Limpia la caché DNS local. Útil cuando una web o sistema interno cambió de IP y la PC sigue intentando ir a la dirección vieja.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term"><code>tracert [ip o dominio]</code></span>
+                    <p class="def-desc">Muestra la ruta y todos los "saltos" (routers) que da un paquete hasta llegar a su destino.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term"><code>net use</code></span>
+                    <p class="def-desc">Comando para conectar, desconectar y configurar conexiones a recursos compartidos. Ej: <code>net use Z: \\servidor\carpeta</code> mapea la unidad Z:. Ideal para scripts de automatización.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term"><code>nslookup [dominio]</code></span>
+                    <p class="def-desc">Consulta los servidores DNS para descubrir qué dirección IP está asociada a un nombre de dominio. Fundamental para diagnosticar problemas de resolución de nombres.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term"><code>gpupdate /force</code></span>
+                    <p class="def-desc">Fuerza a la PC a descargar y aplicar inmediatamente las últimas políticas de grupo (GPO) desde Active Directory.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term"><code>tasklist</code> y <code>taskkill /PID [n] /F</code></span>
+                    <p class="def-desc"><code>tasklist</code> muestra los procesos en ejecución y su número de PID. <code>taskkill</code> fuerza el cierre de un proceso colgado usando su PID.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term"><code>whoami</code></span>
+                    <p class="def-desc">Muestra rápidamente el dominio y nombre de usuario que tiene la sesión iniciada actualmente en la consola.</p>
+                </div>
+            </div>
+            
+            <div class="cheat-sheet-section">
+                <h4>Infraestructura y Hardware Industrial</h4>
+                <div class="def-item">
+                    <span class="def-term">Switch vs Patch Panel:</span>
+                    <p class="def-desc">El <b>Patch Panel</b> es una regleta pasiva de terminación de cables. El <b>Switch</b> es el equipo activo inteligente que conecta y enruta el tráfico entre los equipos.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">Impresión Térmica (Zebra):</span>
+                    <p class="def-desc">Utilizada ampliamente en plantas logísticas. El <b>Ribbon</b> es el rollo de cinta de transferencia que contiene la tinta en una de sus caras (la parte mate). El <b>Cabezal térmico</b> calienta el Ribbon para fijar la tinta en la etiqueta. Limpiar el cabezal regularmente previene rayas blancas e impresiones pálidas.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

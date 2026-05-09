@@ -1124,8 +1124,10 @@
             document.getElementById('cheat-sheet-modal').classList.remove('active');
         }
         // Cerrar con click afuera
-        document.getElementById('cheat-sheet-modal').addEventListener('click', function(e) {
-            if(e.target === this) closeModal();
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('cheat-sheet-modal').addEventListener('click', function(e) {
+                if(e.target === this) closeModal();
+            });
         });
     </script>
 

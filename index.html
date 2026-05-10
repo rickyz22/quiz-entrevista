@@ -408,7 +408,32 @@
         {"id":"q_res_41","category":"Impresoras Corporativas","question":"Un usuario manda a imprimir pero no sale nada. Otras PCs sí pueden imprimir en esa misma impresora de red. ¿Qué revisas primero en la PC afectada?","options":["Que la impresora tenga papel.","La Cola de Impresión local para ver si hay un documento trabado con estado de Error.","El nivel de tóner de la impresora.","Si la placa de red de la PC funciona."],"correct":1,"feedback":"Si otros imprimen, la impresora física está bien. El problema es el cliente: un documento trabado en la cola local bloquea todos los envíos posteriores de esa PC.","explanation":"Asegúrate de recordar esta respuesta para no fallar en la entrevista."},
         {"id":"q_res_42","category":"Impresoras Corporativas","question":"El servicio 'Print Spooler' (Cola de impresión) de Windows se detiene automáticamente apenas lo inicias. ¿Qué acción suele destrabarlo?","options":["Reinstalar Windows.","Borrar los archivos temporales en la ruta C:\\Windows\\System32\\spool\\PRINTERS y reiniciar el servicio.","Cambiar la dirección IP de la impresora.","Aumentar la memoria virtual de la PC."],"correct":1,"feedback":"Archivos corruptos en la carpeta PRINTERS del sistema causan que el Spooler crashee constantemente al intentar leerlos. Borrarlos fuerza una cola limpia.","explanation":"Asegúrate de recordar esta respuesta para no fallar en la entrevista."},
         {"id":"q_res_43","category":"Impresoras Corporativas","question":"Tienes una impresora de red conectada por IP. De un día para otro, todas las PCs la muestran como 'Offline' u 'Sin Conexión'. ¿Qué diagnosticas primero?","options":["Hacer ping a la IP de la impresora para confirmar que está encendida y visible en la red.","Borrar y volver a crear todas las impresoras en todas las PCs.","Reinstalar el driver de red en el servidor.","Comprar un cable USB largo."],"correct":0,"feedback":"Ping a la IP es el paso 1. Si no responde, el problema es físico o de red (cable, switch, DHCP). Si responde, el problema es de software.","explanation":"Asegúrate de recordar esta respuesta para no fallar en la entrevista."},
-        {"id":"q_res_44","category":"Impresoras Corporativas","question":"¿Cuál es la ventaja de instalar una impresora en un Servidor de Impresión Windows (Print Server) y compartirla, en lugar de instalarla por IP directamente en cada PC?","options":["Consume menos tinta.","Administración centralizada: instalas el driver una vez, y puedes auditar y gestionar las colas de todos los usuarios desde un solo lugar.","Imprime más rápido físicamente.","Evita que la impresora se quede sin papel."],"correct":1,"feedback":"Un Print Server facilita enormemente el despliegue mediante GPO y permite un control centralizado de drivers y colas.","explanation":"Asegúrate de recordar esta respuesta para no fallar en la entrevista."}
+        {"id":"q_res_44","category":"Impresoras Corporativas","question":"¿Cuál es la ventaja de instalar una impresora en un Servidor de Impresión Windows (Print Server) y compartirla, en lugar de instalarla por IP directamente en cada PC?","options":["Consume menos tinta.","Administración centralizada: instalas el driver una vez, y puedes auditar y gestionar las colas de todos los usuarios desde un solo lugar.","Imprime más rápido físicamente.","Evita que la impresora se quede sin papel."],"correct":1,"feedback":"Un Print Server facilita enormemente el despliegue mediante GPO y permite un control centralizado de drivers y colas.","explanation":"Asegúrate de recordar esta respuesta para no fallar en la entrevista."},
+        {"id":"q_new_1","category":"Troubleshooting Windows","question":"Una aplicación corporativa se cierra sola de golpe sin mostrar ningún error visible. ¿Dónde buscarías los detalles técnicos del crash en Windows?","options":["En el Administrador de Dispositivos.","En el Visor de Eventos (Event Viewer) bajo 'Registros de Windows → Aplicación'.","En la Papelera de Reciclaje.","En el símbolo del sistema (CMD)."],"correct":1,"feedback":"El Event Viewer es la 'Caja Negra' de Windows. Registra todos los crasheos con códigos de error específicos, timestamps y nombre del módulo que falló.","explanation":"El Administrador de Dispositivos gestiona hardware/drivers, no eventos de aplicaciones. CMD es para ejecutar comandos, no para consultar logs históricos del sistema."},
+        {"id":"q_new_2","category":"Troubleshooting Windows","question":"Al encender una PC, muestra pantallazo azul (BSOD) después de actualizar un driver de video. ¿Cómo inicias Windows para revertir el cambio?","options":["Modo Seguro (Safe Mode), que solo carga controladores básicos y permite desinstalar el driver defectuoso.","Modo Hibernación.","Con un Live CD de Linux.","En Modo Avión."],"correct":0,"feedback":"El Modo Seguro aísla el sistema cargando únicamente drivers Microsoft esenciales, permitiendo desinstalar el driver conflictivo sin que interfiera.","explanation":"Modo Hibernación guarda el estado actual (con el driver roto). Linux no permite desinstalar drivers de Windows. Modo Avión solo desactiva conectividad inalámbrica."},
+        {"id":"q_new_3","category":"Troubleshooting Windows","question":"Un usuario reporta que el menú Inicio no responde y Windows se comporta erráticamente. Sospechas que hay archivos del sistema corruptos. ¿Qué comando ejecutas en CMD como Administrador?","options":["ping localhost","sfc /scannow","ipconfig /renew","format C:"],"correct":1,"feedback":"SFC (System File Checker) escanea TODOS los archivos protegidos del sistema operativo y restaura los corruptos desde la caché interna de Windows (WinSxS).","explanation":"Ping prueba conectividad de red. Ipconfig renueva IP. Format borraría todo el disco. Solo SFC analiza y repara la integridad de archivos del SO."},
+        {"id":"q_new_4","category":"Troubleshooting Windows","question":"Un disco duro mecánico (HDD) reporta errores y Windows se cuelga al leer ciertas carpetas. ¿Qué utilidad nativa de Windows programas para el próximo reinicio?","options":["sfc /scannow","chkdsk /f /r","defrag","diskpart"],"correct":1,"feedback":"CHKDSK (Check Disk) con /f (fijar errores lógicos del filesystem) y /r (localizar y recuperar sectores defectuosos) es la herramienta estándar para reparar volúmenes NTFS.","explanation":"SFC repara archivos del SO, no del disco. Defrag reorganiza fragmentos (no repara). Diskpart gestiona particiones pero no repara errores de disco."},
+        {"id":"q_new_5","category":"Troubleshooting Windows","question":"Una PC tarda 10 minutos en ser usable después de encender. En el Administrador de Tareas notas Spotify, Skype, Adobe y otros programas no esenciales cargando al inicio. ¿Solución?","options":["Ir a la pestaña 'Inicio' (Startup) del Administrador de Tareas y deshabilitar los programas innecesarios.","Agregar otra placa de red.","Apagar y encender el monitor.","Cambiar el antivirus."],"correct":0,"feedback":"El Bloatware que se autoagrega al Startup de Windows consume RAM y disco desde el arranque. Deshabilitar lo innecesario reduce drásticamente el tiempo de inicio.","explanation":"Más hardware de red no afecta el arranque. El monitor no influye en el rendimiento del SO. El antivirus rara vez es la causa principal de lentitud de inicio."},
+        {"id":"q_new_6","category":"Troubleshooting Windows","question":"Un servicio crítico de Windows (ej. Windows Update o el Spooler) no arranca. ¿En qué herramienta administrativa verificas su estado y lo reiniciarías manualmente?","options":["Administrador de Dispositivos (devmgmt.msc).","Panel de Control → Programas y Características.","Servicios (services.msc).","Editor del Registro (regedit)."],"correct":2,"feedback":"services.msc es la consola que muestra todos los servicios del sistema, su estado (Iniciado/Detenido), tipo de inicio (Automático/Manual/Deshabilitado) y permite reiniciarlos.","explanation":"El Administrador de Dispositivos gestiona hardware. Programas y Características administra software instalado. Regedit edita el registro pero no gestiona servicios directamente."},
+        {"id":"q_new_7","category":"Office 365","question":"Un usuario dice que Microsoft Teams no le permite iniciar sesión y muestra error de 'caché'. ¿Qué procedimiento rápido suele solucionar esto?","options":["Reinstalar Windows completo.","Borrar la caché local de Teams (carpeta %appdata%/Microsoft/Teams) y reiniciar la aplicación.","Cambiar la contraseña de la cuenta.","Actualizar el driver de video."],"correct":1,"feedback":"Teams almacena caché localmente que puede corromperse. Borrar la carpeta de caché y reiniciar fuerza una sincronización limpia desde los servidores de Microsoft.","explanation":"Reinstalar Windows es un último recurso extremo. La contraseña no afecta problemas de caché local. El driver de video no tiene relación con autenticación de Teams."},
+        {"id":"q_new_8","category":"Office 365","question":"Un usuario necesita acceder a sus archivos de OneDrive pero dice que 'se le llenó el icono de nube' y no sincroniza más. ¿Cuál es la causa más probable?","options":["El servidor Exchange está caído.","Se llenó la cuota de almacenamiento de OneDrive asignada por la licencia del usuario (1TB estándar en E3/E5).","El cable de red está dañado.","Falta instalar un plugin de sincronización."],"correct":1,"feedback":"Cada licencia de Office 365 tiene un límite de almacenamiento en OneDrive. Cuando se llena, deja de sincronizar. Se resuelve liberando espacio o solicitando ampliación desde el portal admin.","explanation":"Exchange maneja correo, no OneDrive. OneDrive tiene su cliente nativo de sincronización integrado en Windows 10/11, no requiere plugins adicionales."},
+        {"id":"q_new_9","category":"Office 365","question":"El jefe de IT te pide verificar qué licencia de Office 365 tiene asignada un usuario y si su cuenta está activa. ¿Dónde lo haces?","options":["En el Administrador de Dispositivos de la PC del usuario.","En el portal de administración de Microsoft 365 (admin.microsoft.com), sección Usuarios Activos.","En el panel de control de Windows.","En el registro de Windows (regedit)."],"correct":1,"feedback":"El portal admin.microsoft.com es el centro de comando de Office 365 donde se gestionan usuarios, licencias (E1, E3, E5, Business), seguridad y configuración de todos los servicios cloud.","explanation":"Las licencias de O365 se gestionan en la nube, no localmente en la PC. El Administrador de Dispositivos y regedit son herramientas locales de Windows sin relación con licenciamiento cloud."},
+        {"id":"q_new_10","category":"Office 365","question":"Un usuario reporta que no puede compartir pantalla en una reunión de Microsoft Teams. Los demás participantes sí pueden. ¿Qué verificas?","options":["Si tiene instalado Zoom.","Si la política de reuniones de Teams del administrador tiene deshabilitado el compartir pantalla para su rol, o si su GPU/driver de video está desactualizado.","Si tiene activado el modo avión.","Si el teclado funciona correctamente."],"correct":1,"feedback":"Las políticas de Teams en el portal admin pueden restringir funciones por usuario/grupo. También puede ser un problema local de driver de GPU o permisos del SO.","explanation":"Zoom es otra aplicación independiente. El modo avión desconectaría toda la llamada, no solo la pantalla compartida. El teclado no afecta la función de compartir pantalla."},
+        {"id":"q_new_11","category":"Redes y VPN","question":"Un usuario remoto dice que la VPN conecta pero no puede acceder a las carpetas del servidor de archivos interno. ¿Qué verificas?","options":["Si tiene instalado Office 365.","Si la VPN está en modo Split Tunnel (que podría estar enrutando solo cierto tráfico) y si los permisos de red y firewall permiten el acceso al recurso compartido.","Si la pantalla de la notebook tiene brillo suficiente.","Si la impresora local funciona."],"correct":1,"feedback":"En VPN, el modo Split Tunnel envía solo el tráfico corporativo por el túnel. Si la ruta al servidor de archivos no está incluida, no llegará. También verificar que el firewall no esté bloqueando SMB (puerto 445).","explanation":"Office 365 es cloud y no depende de VPN para funcionar. El brillo de pantalla y la impresora local no tienen relación con conectividad de red interna vía VPN."},
+        {"id":"q_new_12","category":"Redes y Networking","question":"El administrador de red te explica que la red de la empresa está segmentada en VLANs: VLAN 10 para Administración, VLAN 20 para Producción, VLAN 30 para Invitados. ¿Cuál es el beneficio principal?","options":["Las PCs se conectan más rápido a internet.","Seguridad y rendimiento: aísla el tráfico entre áreas, evitando que un virus en Invitados afecte Producción, y reduce la congestión de broadcast.","Las impresoras imprimen más rápido.","Se necesitan menos cables de red."],"correct":1,"feedback":"Las VLANs crean redes lógicas independientes dentro del mismo switch físico. Esto mejora la seguridad (aislamiento) y el rendimiento (menos tráfico broadcast por segmento).","explanation":"Las VLANs no afectan la velocidad de internet directamente ni la velocidad de impresión. Tampoco reducen cables, ya que operan a nivel lógico sobre la misma infraestructura física."},
+        {"id":"q_new_13","category":"Redes y WiFi","question":"Después de cambiar la contraseña del Wi-Fi corporativo, 20 notebooks no pueden reconectarse y muestran 'No se puede conectar a esta red'. ¿Qué les indicas a los usuarios?","options":["Que reinicien el router directamente.","Que olviden la red WiFi guardada en Windows y se reconecten ingresando la nueva contraseña.","Que cambien el cable de red.","Que actualicen Windows a la última versión."],"correct":1,"feedback":"Windows guarda las credenciales WiFi en su perfil. Si la contraseña cambia en el AP, hay que 'Olvidar' la red vieja y reconectarse con la nueva clave para actualizar el perfil almacenado.","explanation":"Reiniciar el router no soluciona un problema de credenciales almacenadas en las PCs. Cable de red no aplica a WiFi. Actualizar Windows es irrelevante para credenciales WiFi."},
+        {"id":"q_new_14","category":"Cableado Estructurado","question":"¿Cuál es la diferencia práctica principal entre un cable de red Cat5e y un Cat6 para una instalación nueva en la planta?","options":["El Cat5e es de color azul y el Cat6 es amarillo.","Cat5e soporta hasta 1 Gbps a 100m. Cat6 también soporta 1 Gbps pero con menos interferencia (crosstalk), y puede alcanzar 10 Gbps en tramos cortos (hasta 55m).","No hay diferencia, son exactamente iguales.","Cat6 solo funciona con switches Cisco."],"correct":1,"feedback":"Para instalaciones nuevas se recomienda Cat6 o Cat6a por su mejor blindaje contra interferencias y su capacidad de soportar 10 Gbps, pensando en el futuro de la infraestructura.","explanation":"El color del cable depende del fabricante, no de la categoría. Ambos son compatibles con RJ45 estándar y funcionan con cualquier marca de switch, no solo Cisco."},
+        {"id":"q_new_15","category":"Cableado Estructurado","question":"Al ponchar un cable de red, ¿qué herramienta utilizas para fijar los hilos en el conector RJ45?","options":["Un destornillador Phillips.","Una Crimpeadora (Pinza de Crimpar) para RJ45.","Un soldador de estaño.","Una pinza de electricista común."],"correct":1,"feedback":"La crimpeadora RJ45 es la herramienta específica que presiona los contactos metálicos del conector contra los hilos de cobre del cable, asegurando una conexión eléctrica fiable.","explanation":"Los conectores RJ45 no se sueldan, se crimpan. Un destornillador no tiene la presión uniforme necesaria. Una pinza común deformaría el conector sin hacer contacto adecuado."},
+        {"id":"q_new_16","category":"Cableado Estructurado","question":"Armaste un cable de red y al probarlo no funciona. ¿Qué herramienta usarías para verificar que los 8 hilos hacen contacto correctamente?","options":["Un multímetro digital.","Un Tester de cables de red (Cable Tester LAN) que verifica continuidad pin a pin.","Un osciloscopio.","El comando ipconfig de la PC."],"correct":1,"feedback":"El Cable Tester LAN envía señales por cada uno de los 8 pines y verifica que lleguen correctamente al otro extremo, detectando hilos cruzados, cortados o en cortocircuito.","explanation":"El multímetro puede medir continuidad pero no verifica el orden de los pines. Ipconfig muestra la configuración de red de la PC, no diagnostica cables físicos."},
+        {"id":"q_new_17","category":"Soporte de Celulares","question":"Un empleado se queja de que la pantalla táctil de su celular corporativo responde con retraso o no detecta bien los toques. ¿Cuál es el primer diagnóstico antes de enviarlo a reparación?","options":["Formatear el celular inmediatamente.","Verificar si tiene un protector de pantalla mal colocado o dañado, reiniciar el equipo, y probar en Modo Seguro para descartar una app conflictiva.","Cambiarle la línea telefónica.","Instalarle un antivirus móvil."],"correct":1,"feedback":"Los protectores de pantalla deteriorados o con burbujas son causa frecuente de fallas táctiles. El Modo Seguro descarta apps de terceros que puedan estar consumiendo recursos del digitalizador.","explanation":"Formatear sin diagnosticar primero es perder datos innecesariamente. La línea telefónica no afecta la pantalla táctil. Un antivirus no soluciona problemas de hardware del digitalizador."},
+        {"id":"q_new_18","category":"Soporte de Celulares","question":"Necesitas hacer un Factory Reset (restablecimiento de fábrica) a un celular Android corporativo antes de entregarlo a otro empleado. ¿Qué paso previo es imprescindible?","options":["Sacarle la tarjeta SIM.","Desvincular la cuenta de Google (FRP - Factory Reset Protection) del usuario anterior para que el equipo no quede bloqueado.","Ponerlo a cargar al 100%.","Borrar solo las fotos."],"correct":1,"feedback":"Si haces Factory Reset sin desvincular la cuenta de Google, el celular queda bloqueado por FRP (Factory Reset Protection) y pedirá las credenciales del usuario anterior al reiniciar.","explanation":"La SIM no afecta el bloqueo FRP. Cargar al 100% es recomendable pero no imprescindible. Borrar fotos no limpia el equipo ni desvincula la cuenta corporativa."},
+        {"id":"q_new_19","category":"Comandos CMD","question":"Necesitas saber con qué usuario de dominio está logueada una PC compartida del laboratorio antes de hacer cambios. ¿Qué comando rápido usas en CMD?","options":["netstat","whoami","ipconfig","dir"],"correct":1,"feedback":"'whoami' devuelve instantáneamente 'DOMINIO\\usuario'. Es indispensable cuando trabajas con PCs multiusuario para confirmar en qué perfil estás operando.","explanation":"Netstat muestra conexiones de red activas. Ipconfig muestra configuración IP. Dir lista archivos de un directorio. Solo whoami identifica la sesión de usuario activa."},
+        {"id":"q_new_20","category":"Comandos CMD","question":"Modificaste una Política de Grupo (GPO) en el servidor para mapear impresoras. ¿Qué comando le pides al usuario que ejecute para aplicarla inmediatamente sin reiniciar?","options":["ipconfig /flushdns","gpupdate /force","sfc /scannow","chkdsk"],"correct":1,"feedback":"gpupdate /force fuerza a la PC a descargar y aplicar inmediatamente TODAS las políticas de grupo pendientes desde Active Directory, sin esperar al ciclo automático (90 min aprox).","explanation":"Flushdns limpia caché DNS. SFC repara archivos del SO. Chkdsk revisa el disco. Solo gpupdate fuerza la actualización de políticas de grupo."},
+        {"id":"q_new_21","category":"Comandos CMD","question":"Un usuario olvidó su contraseña de Windows local (no está en dominio). Tienes acceso como administrador local. ¿Qué comando CMD usas para resetearle la clave?","options":["ipconfig /renew","net user [nombre_usuario] [nueva_contraseña]","ping localhost","tasklist"],"correct":1,"feedback":"'net user' permite cambiar contraseñas, crear/eliminar usuarios y gestionar cuentas locales desde la línea de comandos con privilegios de administrador.","explanation":"Ipconfig gestiona configuración de red. Ping prueba conectividad. Tasklist muestra procesos. Solo 'net user' administra cuentas de usuario locales."},
+        {"id":"q_new_22","category":"Comandos CMD","question":"Sospechas que una PC tiene un programa sospechoso comunicándose con servidores externos. ¿Qué comando te muestra todas las conexiones de red activas y los puertos abiertos?","options":["ipconfig /all","tracert 8.8.8.8","netstat -an","nslookup google.com"],"correct":2,"feedback":"'netstat -an' lista TODAS las conexiones TCP/UDP activas con sus IPs de origen/destino y puertos. Ideal para detectar conexiones sospechosas a IPs desconocidas.","explanation":"Ipconfig muestra configuración, no conexiones activas. Tracert muestra la ruta a un destino específico. Nslookup consulta DNS. Solo netstat muestra las conexiones de red en tiempo real."},
+        {"id":"q_new_23","category":"Troubleshooting Windows","question":"Un usuario dice que 'Windows no me deja instalar el programa, dice que necesito permisos'. ¿Qué significa y cómo lo solucionas?","options":["Le dices que use otro programa diferente.","Necesita ejecutar el instalador como Administrador (clic derecho → 'Ejecutar como administrador') o tener credenciales de admin local.","Le cambias el fondo de pantalla.","Le actualizas el antivirus."],"correct":1,"feedback":"Windows con UAC (User Account Control) activo requiere privilegios elevados para instalar software. Como técnico, puedes ingresar las credenciales de admin local para autorizar la instalación.","explanation":"Cambiar de programa no soluciona el problema de permisos. El fondo de pantalla y el antivirus no tienen relación con privilegios de instalación del sistema operativo."},
+        {"id":"q_new_24","category":"Troubleshooting de Redes","question":"Una PC tiene internet pero los sitios web tardan mucho en cargar. Haces ping a 8.8.8.8 y responde en 3ms, pero 'ping google.com' tarda 1500ms antes de responder. ¿Qué está lento?","options":["La placa de red de la PC.","La resolución DNS: el servidor DNS configurado está tardando demasiado en resolver nombres. Cambiar a un DNS más rápido (ej. 8.8.8.8 o 1.1.1.1) podría solucionarlo.","El monitor es muy viejo.","El teclado inalámbrico tiene interferencia."],"correct":1,"feedback":"Si la conectividad IP es rápida (3ms) pero la resolución de nombres es lenta (1500ms), el cuello de botella está en el servidor DNS. Configurar un DNS público más veloz es la solución inmediata.","explanation":"La latencia al ping por IP es baja (3ms), descartando problemas de placa de red o cable. Monitor y teclado no afectan la velocidad de resolución de nombres de red."},
+        {"id":"q_new_25","category":"Soporte y Soft Skills","question":"Un usuario te llama furioso diciendo 'la computadora no sirve para nada, esto es basura'. ¿Cuál es la mejor forma de manejar la situación como técnico de soporte?","options":["Decirle que no es tu culpa y que llame a otro departamento.","Escucharlo con calma, validar su frustración ('Entiendo que es frustrante'), y hacerle preguntas técnicas concretas para diagnosticar el problema real.","Ignorar su queja y solo arreglar el problema sin hablar.","Decirle que si sigue gritando no lo vas a atender."],"correct":1,"feedback":"La escucha activa y la empatía son habilidades fundamentales en soporte Nivel 1. Validar la emoción del usuario baja la tensión y permite pasar rápidamente al diagnóstico técnico.","explanation":"Derivar, ignorar o amenazar con no atender son respuestas que escalan el conflicto. El soporte técnico profesional combina habilidad técnica con inteligencia emocional."}
         ];
 
         // Estado y Estadísticas
@@ -725,24 +750,160 @@
             </div>
             
             <div class="cheat-sheet-section">
-                <h4>Active Directory & AD</h4>
+                <h4>🔐 Active Directory (AD)</h4>
                 <div class="def-item">
                     <span class="def-term">Active Directory (AD):</span>
-                    <p class="def-desc">Directorio central de Microsoft donde se administran usuarios, permisos y PCs del "Dominio".</p>
+                    <p class="def-desc">Directorio centralizado de Microsoft donde se administran usuarios, contraseñas, grupos de seguridad y computadoras de la red corporativa (el "Dominio").</p>
                 </div>
                 <div class="def-item">
                     <span class="def-term">GPO (Group Policy Object):</span>
-                    <p class="def-desc">Políticas para configurar remotamente opciones de Windows (bloquear USB, mapear impresoras) en miles de PCs.</p>
+                    <p class="def-desc">Políticas de Grupo. Permiten a IT configurar remotamente opciones de Windows (bloquear USB, mapear impresoras, fondos de pantalla) en miles de PCs a la vez desde el servidor.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">OU (Organizational Unit):</span>
+                    <p class="def-desc">Unidades Organizativas. Contenedores dentro de AD para agrupar usuarios/PCs por área (ej. OU_Producción, OU_Administración) y aplicarles GPOs específicas.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">Unlock Account vs Reset Password:</span>
+                    <p class="def-desc"><b>Unlock</b>: Destildar el candado en la pestaña Account (el usuario recuerda su clave). <b>Reset</b>: Cambiar la clave + marcar "User must change password at next logon".</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">Login local (.\\usuario):</span>
+                    <p class="def-desc">El prefijo <code>.\\</code> antes del nombre de usuario le dice a Windows que valide contra la base local (SAM) y no contra el dominio. Útil cuando no hay red.</p>
                 </div>
             </div>
-            
+
             <div class="cheat-sheet-section">
-                <h4>Redes & CMD</h4>
-                <div class="def-item"><span class="def-term">DHCP:</span><p class="def-desc">Asigna IPs dinámicas automáticamente a la red.</p></div>
-                <div class="def-item"><span class="def-term">DNS:</span><p class="def-desc">Traduce nombres de dominio a direcciones IP.</p></div>
-                <div class="def-item"><span class="def-term">APIPA (169.254.x.x):</span><p class="def-desc">IP de auto-asignación por fallo del servidor DHCP.</p></div>
-                <div class="def-item"><span class="def-term"><code>gpupdate /force</code>:</span><p class="def-desc">Fuerza descarga de GPOs desde AD.</p></div>
-                <div class="def-item"><span class="def-term"><code>taskkill /PID [n] /F</code>:</span><p class="def-desc">Fuerza el cierre de un proceso trabado (PID).</p></div>
+                <h4>🌐 Redes y Networking</h4>
+                <div class="def-item">
+                    <span class="def-term">Dirección IP (IPv4):</span>
+                    <p class="def-desc">Identificador único de un equipo en la red (ej. 192.168.1.50). Puede ser <b>Estática</b> (fija, para servidores/impresoras) o <b>Dinámica</b> (asignada por DHCP).</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">DNS (Domain Name System):</span>
+                    <p class="def-desc">Traduce nombres (intranet.jayor.local) a IPs. Si la IP funciona pero el nombre no → falla de DNS.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">DHCP:</span>
+                    <p class="def-desc">Servicio que asigna automáticamente IPs, máscaras y gateways a los dispositivos de la red.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">Gateway (Puerta de Enlace):</span>
+                    <p class="def-desc">El router que permite salir de la red local hacia otras redes o internet.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">APIPA (169.254.x.x):</span>
+                    <p class="def-desc">IP de auto-asignación cuando Windows no encuentra servidor DHCP. Significa: "no tengo red".</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">VLAN (Virtual LAN):</span>
+                    <p class="def-desc">Segmentación lógica de la red en un switch. Aísla el tráfico entre áreas (Producción, Admin, Invitados) mejorando seguridad y rendimiento.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">VPN (Virtual Private Network):</span>
+                    <p class="def-desc">Crea un túnel cifrado para acceder a la red corporativa desde fuera. <b>Split Tunnel</b> = solo el tráfico corporativo va por el túnel.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">SLA (Service Level Agreement):</span>
+                    <p class="def-desc">Acuerdo de Nivel de Servicio. Define tiempos máximos de respuesta/resolución. Producción y Despacho siempre tienen SLA crítico.</p>
+                </div>
+            </div>
+
+            <div class="cheat-sheet-section">
+                <h4>☁️ Office 365</h4>
+                <div class="def-item">
+                    <span class="def-term">Portal Admin (admin.microsoft.com):</span>
+                    <p class="def-desc">Centro de control de O365. Ahí se gestionan usuarios, licencias (E1/E3/E5), seguridad y configuración de todos los servicios cloud.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">OneDrive:</span>
+                    <p class="def-desc">Almacenamiento cloud personal (1TB con E3/E5). Si se llena, deja de sincronizar.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">Archivo .OST (Outlook):</span>
+                    <p class="def-desc">Caché local de Outlook. Si se corrompe, el mail deja de sincronizar aunque OWA funcione. Solución: renombrar el .ost o crear perfil nuevo.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">MFA / 2FA (Autenticación Multifactor):</span>
+                    <p class="def-desc">Seguridad extra que pide un código (Token) del Authenticator además de la contraseña. Si falla, revisar la vinculación de la app.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">MDM (Mobile Device Management):</span>
+                    <p class="def-desc">Administración de dispositivos móviles corporativos. Permite borrado remoto (Remote Wipe) si se pierde un celular.</p>
+                </div>
+            </div>
+
+            <div class="cheat-sheet-section">
+                <h4>🪛 Windows Troubleshooting</h4>
+                <div class="def-item">
+                    <span class="def-term">Event Viewer (Visor de Eventos):</span>
+                    <p class="def-desc">La "caja negra" de Windows. Registra crasheos, errores de apps y del sistema con timestamps y códigos de error detallados.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">Modo Seguro (Safe Mode):</span>
+                    <p class="def-desc">Inicia Windows con drivers básicos. Ideal para desinstalar drivers o software defectuoso que causa BSOD.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">services.msc:</span>
+                    <p class="def-desc">Consola para ver y gestionar todos los servicios de Windows (Spooler, Windows Update, etc.). Permite iniciar, detener y cambiar el tipo de arranque.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">UAC (User Account Control):</span>
+                    <p class="def-desc">Control de cuentas de usuario. Pide permiso de admin para instalar software. Solución: clic derecho → "Ejecutar como administrador".</p>
+                </div>
+            </div>
+
+            <div class="cheat-sheet-section">
+                <h4>🔌 Cableado Estructurado</h4>
+                <div class="def-item">
+                    <span class="def-term">T568B (Norma de cableado):</span>
+                    <p class="def-desc">Estándar de colores para ponchar RJ45. Orden: Blanco-Naranja, Naranja, Blanco-Verde, Azul, Blanco-Azul, Verde, Blanco-Marrón, Marrón.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">Cat5e vs Cat6:</span>
+                    <p class="def-desc"><b>Cat5e</b>: 1 Gbps a 100m. <b>Cat6</b>: 1 Gbps con menos crosstalk + 10 Gbps hasta 55m. Para instalaciones nuevas → Cat6 o Cat6a.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">Crimpeadora / Cable Tester:</span>
+                    <p class="def-desc"><b>Crimpeadora</b>: Herramienta para fijar hilos al conector RJ45. <b>Tester LAN</b>: Verifica continuidad pin a pin de los 8 hilos.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">Switch vs Patch Panel:</span>
+                    <p class="def-desc"><b>Patch Panel</b>: Regleta pasiva de terminación de cables. <b>Switch</b>: Equipo activo inteligente que enruta el tráfico entre los equipos.</p>
+                </div>
+            </div>
+
+            <div class="cheat-sheet-section">
+                <h4>⌨️ Comandos CMD Esenciales</h4>
+                <div class="def-item"><span class="def-term"><code>ping [ip/dominio]</code></span><p class="def-desc">Verifica conectividad básica con otro equipo. Ej: <code>ping 8.8.8.8</code></p></div>
+                <div class="def-item"><span class="def-term"><code>ipconfig /all</code></span><p class="def-desc">Muestra IP, Máscara, Gateway, MAC y DNS del equipo.</p></div>
+                <div class="def-item"><span class="def-term"><code>ipconfig /flushdns</code></span><p class="def-desc">Limpia caché DNS local. Útil cuando un sitio cambió de IP.</p></div>
+                <div class="def-item"><span class="def-term"><code>nslookup [dominio]</code></span><p class="def-desc">Consulta al servidor DNS qué IP tiene un nombre. Diagnóstico de resolución de nombres.</p></div>
+                <div class="def-item"><span class="def-term"><code>tracert [destino]</code></span><p class="def-desc">Muestra todos los saltos (routers) que recorre un paquete hasta llegar al destino.</p></div>
+                <div class="def-item"><span class="def-term"><code>netstat -an</code></span><p class="def-desc">Lista todas las conexiones de red activas y puertos abiertos. Detecta conexiones sospechosas.</p></div>
+                <div class="def-item"><span class="def-term"><code>net use Z: \\servidor\carpeta</code></span><p class="def-desc">Mapea una unidad de red. Ideal para scripts de automatización (.bat / GPO).</p></div>
+                <div class="def-item"><span class="def-term"><code>net user [usuario] [clave]</code></span><p class="def-desc">Gestiona cuentas locales: cambiar contraseña, crear/eliminar usuarios.</p></div>
+                <div class="def-item"><span class="def-term"><code>whoami</code></span><p class="def-desc">Muestra DOMINIO\usuario de la sesión activa. Indispensable en PCs multiusuario.</p></div>
+                <div class="def-item"><span class="def-term"><code>gpupdate /force</code></span><p class="def-desc">Fuerza aplicación inmediata de las GPOs de Active Directory sin esperar el ciclo automático.</p></div>
+                <div class="def-item"><span class="def-term"><code>sfc /scannow</code></span><p class="def-desc">Escanea y repara archivos corruptos del sistema operativo.</p></div>
+                <div class="def-item"><span class="def-term"><code>chkdsk /f /r</code></span><p class="def-desc">Revisa y repara errores del disco duro. /f = errores lógicos, /r = sectores dañados.</p></div>
+                <div class="def-item"><span class="def-term"><code>tasklist</code> / <code>taskkill /PID [n] /F</code></span><p class="def-desc">Listar procesos y forzar cierre de uno trabado usando su PID.</p></div>
+            </div>
+
+            <div class="cheat-sheet-section">
+                <h4>🖨️ Hardware e Impresoras</h4>
+                <div class="def-item">
+                    <span class="def-term">Impresión Térmica (Zebra):</span>
+                    <p class="def-desc">El <b>Ribbon</b> es la cinta con tinta (cara mate). El <b>Cabezal</b> calienta para fijar la tinta. Limpiar con isopropílico previene rayas e impresiones pálidas.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">Print Spooler:</span>
+                    <p class="def-desc">Servicio de Windows que gestiona la cola de impresión. Si crashea, borrar archivos en <code>C:\Windows\System32\spool\PRINTERS</code> y reiniciar.</p>
+                </div>
+                <div class="def-item">
+                    <span class="def-term">FRP (Factory Reset Protection):</span>
+                    <p class="def-desc">Protección de Google/Android. Si haces Factory Reset sin desvincular la cuenta de Google, el celular queda bloqueado.</p>
+                </div>
             </div>
         </div>
     </div>
